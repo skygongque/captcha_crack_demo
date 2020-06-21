@@ -6,11 +6,11 @@
 导入ypwhs大佬训练的模型，试了一些对captcha生成的验码确实可以几乎100%正确识别。  
 
 可以识别的验证码示例  
-![可以识别的验证码](cracked_captchas\MBLG.jpg)
+![可以识别的验证码](.\cracked_captchas\MBLG.jpg)
 
 尝试换了一种验证码用原模型识别基本全错。
 换的一种验证码示例  
-![换的一种验证码示例](other_captchas\101.jpg)
+![换的一种验证码示例](.\other_captchas\101.jpg)
 
 得出结论要**对每种类型的验证码单独训练**  
 
