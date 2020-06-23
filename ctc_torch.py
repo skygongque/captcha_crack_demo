@@ -143,9 +143,15 @@ class Model(nn.Module):
 
 # torch加载模型前要定义好相同的模型（参数未优化），加载模型相当于加载优化后的参数
 # 加载模型 映射到cpu-only的设备
-device = torch.device('cpu')
-model = torch.load('ctc.pth', map_location=device)
+# device = torch.device('cpu')
+# model = torch.load('ctc.pth', map_location=device)
+# ctc_622.pth
 
+""" torch.save(model.state_dict(), PATH) 方式保存时的加载方式 """
+
+model = Model(n_classes, input_shape=(3, height, width))
+model.load_state_dict(torch.load('ctc_622.pth',map_location=torch.device('cpu')))
+# print(model)
 # 用ypwhs训练完的模型('ctc.pth')进行预测
 # 自己设备不行就没有训练
 model.eval()
@@ -154,6 +160,7 @@ image, target, input_length, label_length = dataset[0]
 pic = to_pil_image(image)
 print('true:', decode_target(target))
 output = model(image.unsqueeze(0))
+# print(output)
 output_argmax = output.detach().permute(1, 0, 2).argmax(dim=-1)
 pred_num = decode(output_argmax[0])
 print('pred:', pred_num)
