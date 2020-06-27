@@ -39,5 +39,5 @@ class CNN(nn.Module):
 ```
 
 ## 在云GPU上计算的结果
-[Two_num_captcha.ipynb](two_num_captchas\Two_num_captcha.ipynb)  
+[Two_num_captcha.ipynb](https://github.com/skygongque/captcha_crack_demo/tree/master/two_num_captchas/Two_num_captcha.ipynb)  
 [mistgpu注册](https://mistgpu.com/i/227504)   
