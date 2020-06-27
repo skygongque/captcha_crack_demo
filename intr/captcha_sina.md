@@ -5,7 +5,7 @@
 ## 数据集来源
 [数据集来源](https://bbs.nightteam.cn/thread-470.htm)
 
-## 训练使用的方法使用方法  
+## 训练方法参考  
 [ctc_pytorch](https://github.com/ypwhs/captcha_break)  
 
 ## 笔记
