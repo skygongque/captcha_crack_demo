@@ -9,6 +9,6 @@
 
 ## 训练结果
 最终训练集的准确率**98%**以上  
-![训练结果](https://github.com/skygongque/captcha_crack_demo/tree/master/resource/sougou_training_process.png)
+![训练结果](https://raw.githubusercontent.com/skygongque/captcha_crack_demo/master/resource/sougou_training_process.png)
 
 
