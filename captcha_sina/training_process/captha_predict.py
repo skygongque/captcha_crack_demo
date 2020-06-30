@@ -1,12 +1,14 @@
 """ 加载训练后的模型 """
-
+""" 
+数据集来源
+模型训练的代码等
+https://github.com/skygongque/captcha_crack_demo/blob/master/01_introduction/captcha_sina.md 
+"""
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-# from torch.utils.data import Dataset, DataLoader
 from torchvision.transforms.functional import to_tensor, to_pil_image
 import os
-# from tqdm import tqdm
 import random
 import numpy as np
 from collections import OrderedDict
@@ -14,12 +16,10 @@ import string
 from PIL import Image
 
 
-
-# characters = '-' + string.digits + string.ascii_uppercase
 characters = '-' + string.digits + string.ascii_lowercase
 width, height, n_len, n_classes = 100, 40, 5, len(characters)
 n_input_length = 12
-print(characters, width, height, n_len, n_classes)
+# print(characters, width, height, n_len, n_classes)
 
 
 
@@ -68,10 +68,10 @@ class Model(nn.Module):
         return x
 
 
-model = Model(n_classes, input_shape=(3, height, width))
-inputs = torch.zeros((32, 3, height, width))
-outputs = model(inputs)
-print(outputs.shape)
+# model = Model(n_classes, input_shape=(3, height, width))
+# inputs = torch.zeros((32, 3, height, width))
+# outputs = model(inputs)
+# print(outputs.shape)
 
 
 def decode(sequence):
@@ -86,12 +86,12 @@ def decode(sequence):
 def decode_target(sequence):
     return ''.join([characters[x] for x in sequence]).replace(' ', '')
 
-def calc_acc(target, output):
-    output_argmax = output.detach().permute(1, 0, 2).argmax(dim=-1)
-    target = target.cpu().numpy()
-    output_argmax = output_argmax.cpu().numpy()
-    a = np.array([decode_target(true) == decode(pred) for true, pred in zip(target, output_argmax)])
-    return a.mean()
+# def calc_acc(target, output):
+#     output_argmax = output.detach().permute(1, 0, 2).argmax(dim=-1)
+#     target = target.cpu().numpy()
+#     output_argmax = output_argmax.cpu().numpy()
+#     a = np.array([decode_target(true) == decode(pred) for true, pred in zip(target, output_argmax)])
+#     return a.mean()
 
 
 
@@ -99,18 +99,19 @@ model = Model(n_classes, input_shape=(3, height, width))
 model.load_state_dict(torch.load('ctc_625_22.pth',map_location=torch.device('cpu')))
 model.eval()
 
-for i in range(20):
-    # 更新验证码
-    from get_new_captcha import get_pin
-    get_pin()
-    pic = Image.open(r'pin_img.jpg')
-    # 转换成3通道
-    image = to_tensor(pic.convert("RGB"))
-    # image = my_transforms(pic)
-    output = model(image.unsqueeze(0))
-    output_argmax = output.detach().permute(1, 0, 2).argmax(dim=-1)
-    print('pred:', decode(output_argmax[0]))
-    pic.show()
-    input('enter:')
+if __name__ == "__main__":
+    for i in range(20):
+        # 更新验证码
+        from get_new_captcha import get_pin
+        get_pin()
+        pic = Image.open(r'pin_img.jpg')
+        # 转换成3通道
+        image = to_tensor(pic.convert("RGB"))
+        # image = my_transforms(pic)
+        output = model(image.unsqueeze(0))
+        output_argmax = output.detach().permute(1, 0, 2).argmax(dim=-1)
+        print('pred:', decode(output_argmax[0]))
+        pic.show()
+        input('enter:')
 
 
