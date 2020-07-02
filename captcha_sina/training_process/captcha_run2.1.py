@@ -74,7 +74,7 @@ train_set = CaptchaDataset(characters = characters, width=width, height=height, 
 # train_set = CaptchaDataset(characters = characters,length=100*batch_size, width=width, height=height, input_length=n_input_length, label_length=n_len,folder=TRAIN_DATASET_PATH)
 # valid_set = CaptchaDataset(characters, 100 * batch_size, width, height, n_input_length, n_len)
 # shuffle=True,drop_last=True
-train_loader = DataLoader(train_set, batch_size=batch_size, num_workers=12,shuffle=True,drop_last=True)
+train_loader = DataLoader(train_set, batch_size=batch_size, num_workers=0,shuffle=True,drop_last=True)
 # valid_loader = DataLoader(valid_set, batch_size=batch_size, num_workers=12)
 
 
