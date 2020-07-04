@@ -1,4 +1,5 @@
 from flask import Flask,request
+from gevent.pywsgi import WSGIServer
 import json
 
 import base64
@@ -34,8 +35,13 @@ def captcha_predict():
         return_dict['return_info'] = '参数错误，没有img属性'
     return json.dumps(return_dict, ensure_ascii=False)
 
+@app.route("/sina",methods=['GET'])
+def get_info():
+    return_dict= { 'return_info': '请用post方法请求该地址'}
+    return json.dumps(return_dict)
 
-""" 加载训练后的模型 """
+
+# 基本的参数
 characters = '-' + string.digits + string.ascii_lowercase
 width, height, n_len, n_classes = 100, 40, 5, len(characters)
 n_input_length = 12
@@ -99,6 +105,8 @@ def decode(sequence):
 def decode_target(sequence):
     return ''.join([characters[x] for x in sequence]).replace(' ', '')
 
+
+""" 加载训练后的模型 """
 model = Model(n_classes, input_shape=(3, height, width))
 model.load_state_dict(torch.load('ctc_625_22.pth',map_location=torch.device('cpu')))
 model.eval()
@@ -115,4 +123,8 @@ def predict(base64_img):
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    # app.run(debug=True)
+    print('启动服务')
+    http_server = WSGIServer(('0.0.0.0', 5000), app)
+    http_server.serve_forever()
+    
