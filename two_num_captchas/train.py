@@ -10,7 +10,7 @@ import numpy as np
 
 import string
 
-characters =  string.digits
+characters = string.digits
 width, height, n_len, n_classes = 80, 40, 4, len(characters)
 label_length = 2
 # n_input_length = 12
@@ -21,6 +21,7 @@ max_epoch = 15
 
 class TwoNumCaptchaDataset(Dataset):
     """ 两位数字验证码的图片 """
+
     def __init__(self, characters, length, width, height, label_length):
         super(TwoNumCaptchaDataset, self).__init__()
         self.characters = characters
@@ -32,7 +33,7 @@ class TwoNumCaptchaDataset(Dataset):
         self.n_class = len(characters)
         self.generator = ImageCaptcha(width=width, height=height)
 
-    def encode_label(self,target_str):
+    def encode_label(self, target_str):
         target = []
         for char in target_str:
             vec = [0.0] * len(self.characters)
@@ -42,43 +43,43 @@ class TwoNumCaptchaDataset(Dataset):
 
     def __len__(self):
         return self.length
-    
+
     def __getitem__(self, index):
-        random_str = ''.join([random.choice(self.characters[1:]) for j in range(self.label_length)])
+        random_str = ''.join([random.choice(self.characters[1:])
+                              for j in range(self.label_length)])
         image = to_tensor(self.generator.generate_image(random_str))
         # 进行one_hot编码
-        target = torch.tensor(self.encode_label(random_str)) 
+        target = torch.tensor(self.encode_label(random_str))
         # target_length = torch.full(size=(1, ), fill_value=self.label_length, dtype=torch.long)
         return image, target
 
 
 class CNN(nn.Module):
-    def __init__(self,num_class=10, num_char=2):
-        super(CNN,self).__init__()
+    def __init__(self, num_class=10, num_char=2):
+        super(CNN, self).__init__()
         self.num_class = num_class
         self.num_char = num_char
         self.conv = nn.Sequential(
-                # b*3*80*40
-                nn.Conv2d(3, 16, 3, padding=(1, 1)),
-                nn.MaxPool2d(2, 2),
-                nn.BatchNorm2d(16),
-                nn.ReLU(),
-                
-                nn.Conv2d(16, 64, 3, padding=(1, 1)),
-                nn.MaxPool2d(2, 2),
-                nn.BatchNorm2d(64),
-                nn.ReLU(),
-                )
+            # b*3*80*40
+            nn.Conv2d(3, 16, 3, padding=(1, 1)),
+            nn.MaxPool2d(2, 2),
+            nn.BatchNorm2d(16),
+            nn.ReLU(),
+
+            nn.Conv2d(16, 64, 3, padding=(1, 1)),
+            nn.MaxPool2d(2, 2),
+            nn.BatchNorm2d(64),
+            nn.ReLU(),
+        )
         self.fc = nn.Linear(64*10*20, self.num_class*self.num_char)
         # temp = torch.randn(2,3,40,80)
         # out = self.conv(temp)
         # print(out.shape)
 
-
     def forward(self, x):
         x = self.conv(x)
         # -1 适应后面的size
-        x = x.view(-1,64*10*20)
+        x = x.view(-1, 64*10*20)
         x = self.fc(x)
         return x
 
@@ -102,9 +103,9 @@ def calculat_acc(output, target):
 
 batch_size = 128
 train_set = TwoNumCaptchaDataset(
-    characters=characters, length=batch_size*100, width=width, height=height, label_length=2)
+    characters=characters, length=batch_size*1, width=width, height=height, label_length=2)
 # 改num_workers增加速度
-train_loader = DataLoader(train_set, batch_size=batch_size,num_workers=12)
+train_loader = DataLoader(train_set, batch_size=batch_size, num_workers=0)
 test_set = TwoNumCaptchaDataset(
     characters=characters, length=300, width=width, height=height, label_length=2)
 test_loader = DataLoader(test_set, batch_size=batch_size)
@@ -130,8 +131,7 @@ for epoch in range(max_epoch):
         loss.backward()
         optimizer.step()
     print(f'epoch:{epoch}  train_loss:{loss:.4f}')
-    
-    
+
     # test
     with torch.no_grad():
         # loss_history = []
@@ -148,13 +148,11 @@ for epoch in range(max_epoch):
         print('test_acc: {:.4}'.format(
             # torch.mean(torch.Tensor(loss_history)),
             torch.mean(torch.Tensor(acc_history))
-            ))    
+        ))
 
 # save model
 torch.save(cnn.state_dict(), 'cnn_6_27.pth')
 print('saved')
-
-
 
 
 if __name__ == "__main__":
