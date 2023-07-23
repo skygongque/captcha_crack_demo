@@ -1,4 +1,4 @@
-torch==1.2.0+cpu
+torch==1.13.1
 numpy==1.19.0
 requests==2.24.0
 Flask==1.1.2
